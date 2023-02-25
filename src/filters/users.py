@@ -19,4 +19,13 @@ class AdminFilter(BoundFilter):
 
 
 class UserFilter(BoundFilter):
-    pass
+    key = 'is_user'
+
+    def __init__(self, is_user: typing.Optional[bool] = None):
+        self.is_user = is_user
+
+    async def check(self, obj):
+        if self.is_user is None:
+            return False
+        config: Config = obj.bot.get('config')
+        return (obj.from_user.id in config.tg_bot.admin_ids) != self.is_user

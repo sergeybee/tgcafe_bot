@@ -3,12 +3,11 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
+# from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
 from src.config import load_config
-from src.filters.admin import AdminFilter
+from src.filters.users import AdminFilter, UserFilter
 from src.handlers.admin import register_admin
-from src.handlers.echo import register_echo
 from src.handlers.user import register_user
 from src.middlewares.environment import EnvironmentMiddleware
 
@@ -21,13 +20,12 @@ def register_all_middlewares(dp, config):
 
 def register_all_filters(dp):
     dp.filters_factory.bind(AdminFilter)
+    dp.filters_factory.bind(UserFilter)
 
 
 def register_all_handlers(dp):
     register_admin(dp)
     register_user(dp)
-
-    register_echo(dp)
 
 
 async def main():
@@ -38,7 +36,7 @@ async def main():
     logger.info("Starting bot")
     config = load_config(".env")
 
-    storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
+    storage = MemoryStorage()  # RedisStorage2() if config.tg_bot.use_redis else
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(bot, storage=storage)
 
