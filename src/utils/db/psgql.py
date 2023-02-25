@@ -5,18 +5,21 @@ from src.config import Config
 
 
 def show_users(obj):
-    config: Config = obj.bot.get('config')
-    conn = psycopg2.connect(
-        database=config.db.database,
-        user=config.db.user,
-        password=config.db.password,
-        host=config.db.host
-    )
+    try:
+        config: Config = obj.bot.get('config')
+        conn = psycopg2.connect(
+            database=config.db.database,
+            user=config.db.user,
+            password=config.db.password,
+            host=config.db.host
+        )
 
-    cursor = conn.cursor()
+        with conn.cursor() as cursor:
 
-    cursor.execute('SELECT * FROM users')
-    records = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return records
+            cursor.execute('SELECT * FROM users LIMIT 5')
+            get_users = cursor.fetchall()
+            return get_users
+
+    except Exception as _ex:
+        print("[INFO] Error while working with PostgreSQL", _ex)
+
