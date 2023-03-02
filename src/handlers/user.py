@@ -52,5 +52,4 @@ async def message_handler_show_help(message: types.Message):
 
 def register_user(dp: Dispatcher):
     dp.register_message_handler(message_handler_user_start, commands=["start"], state="*", is_user=True)
-    dp.register_message_handler(message_handler_categories, text="Меню", state="*", is_user=True)
     dp.register_message_handler(message_handler_show_help, text="Помощь")

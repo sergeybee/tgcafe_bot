@@ -11,14 +11,14 @@ product_cd = CallbackData('product', 'id', 'action')
 
 
 # Inline кнопка добавления в корзину
-def ikb_add_product_to_cart():
-    global product_cb
-
-    markup = InlineKeyboardMarkup()
-    markup.add(
-        InlineKeyboardButton(text='Добавить в корзину - {price}₽', callback_data=product_cd.new(id=idx, action='add')))
-
-    return markup
+# def ikb_add_product_to_cart():
+#     global product_cb
+#
+#     markup = InlineKeyboardMarkup()
+#     markup.add(
+#         InlineKeyboardButton(text='Добавить в корзину - {price}₽', callback_data=product_cd.new(id=idx, action='add')))
+#
+#     return markup
 
 
 def ikb_empty_order_cart(idx=''):

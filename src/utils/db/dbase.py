@@ -42,7 +42,7 @@ class DataBase:
             result = self.cursor.fetchall()
         return result
 
-    async def get_product(self, product_id):
+    def get_product(self, product_id):
         """Получает информацию о продукте из списка продуктов уровня"""
         with self.connect:
             self.cursor.execute('SELECT id, name, price FROM product WHERE id=%s', (product_id,))

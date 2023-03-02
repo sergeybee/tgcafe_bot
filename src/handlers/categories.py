@@ -1,8 +1,8 @@
 from typing import Union
 
 from aiogram import types, Dispatcher
-from src.keyboards.inline.ikb_products import back_level, ikb_products
-from src.keyboards.inline.ikb_categories import ikb_categories, categories_cb
+from src.keyboards.inline.ikb_products import back_level1
+from src.keyboards.inline.ikb_categories import ikb_categories
 
 
 async def message_handler_categories(message: Union[types.CallbackQuery, types.Message], **kwargs):
@@ -15,5 +15,6 @@ async def message_handler_categories(message: Union[types.CallbackQuery, types.M
 
 
 def register_categories(dp: Dispatcher):
-    dp.register_callback_query_handler(message_handler_categories, back_level.filter(action='back_level1'), state="*",
+    dp.register_message_handler(message_handler_categories, text="Меню", state="*", is_user=True)
+    dp.register_callback_query_handler(message_handler_categories, back_level1.filter(action='back_level1'), state="*",
                                        is_user=True)
