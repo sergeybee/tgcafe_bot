@@ -15,8 +15,7 @@ db = DataBase(config.db.database, config.db.user, config.db.password, config.db.
 
 
 async def message_handler_user_start(message: types.Message):
-    # @dp.message_handler(commands="start")
-    # async def start_message(message: types.Message) -> None:
+
     #     """welcome message."""
     #     if await db.verification(message.from_user.id):
     #         await bot.send_message(message.chat.id, "👋 Hello, I remember you.")
