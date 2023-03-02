@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 back_message = '👈 Назад'
 confirm_message = '✅ Подтвердить заказ'
@@ -7,7 +7,7 @@ cancel_message = '🚫 Отменить'
 
 
 # Главное меню пользователя
-def show_user_menu():
+def user_menu():
     reply_menu = ReplyKeyboardMarkup(
         keyboard=[
             [

@@ -1,6 +1,5 @@
 from aiogram import types, Dispatcher
 from src.keyboards.reply.menu_admin import admin_menu, statistics_menu
-from src.utils.db.psgql import show_users
 
 
 async def admin_start(message: types.Message):
@@ -9,7 +8,7 @@ async def admin_start(message: types.Message):
 
 
 async def show_statistics(message: types.Message):
-    await message.answer(f"Выбери что ты хотел! {show_users(message)}", reply_markup=statistics_menu())
+    await message.answer(f"Выбери что ты хотел!", reply_markup=statistics_menu())
     await message.delete()
 
 
