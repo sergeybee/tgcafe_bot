@@ -28,6 +28,8 @@ async def callback_list_products(callback: types.CallbackQuery, category_id, **k
 
 
 async def callback_show_product(callback: types.CallbackQuery, category_id, item_id):
+    # Добавить вывод фото
+    # Добавить вывод клавиатуры с кол-ом товаров и кнопками плюс (+) и минус (-)
     await callback.message.edit_text(f"Товар: {db.get_product(item_id)}", reply_markup=ikb_product(category_id, item_id))
     await callback.answer()
 
@@ -37,9 +39,6 @@ async def navigate(callback: types.CallbackQuery, callback_data: dict):
     :param callback: Тип объекта CallbackQuery, который прилетает в хендлер
     :param callback_data: Словарь с данными, которые хранятся в нажатой кнопке
     """
-
-    print(callback)
-    print(callback_data)
 
     # Получаем текущий уровень меню, который запросил пользователь
     current_level = callback_data.get("level")

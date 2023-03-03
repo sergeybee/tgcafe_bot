@@ -13,7 +13,6 @@ db = DataBase(config.db.database, config.db.user, config.db.password, config.db.
 
 
 async def message_handler_user_start(message: types.Message):
-
     #     """welcome message."""
     #     if await db.verification(message.from_user.id):
     #         await bot.send_message(message.chat.id, "👋 Hello, I remember you.")
@@ -31,29 +30,37 @@ async def message_handler_user_start(message: types.Message):
 
     if not db.exists_user(message.from_user.id):
         await message.answer("Здравствуйте, вы у нас в первый раз", reply_markup=user_menu())
-        db.create_new_user(message.from_user.id, message.from_user.first_name, message.from_user.username,
-                           datetime.now())
+        db.add_new_user(message.from_user.id, message.from_user.first_name, message.from_user.username,
+                        datetime.now())
     else:
         await message.answer("Рады видеть вас снова!!!", reply_markup=user_menu())
     await message.delete()
 
 
 async def message_handler_show_help(message: types.Message):
-
     text = [
-            "По вопросам предзаказа можно обратиться по тел. +7(111)111-11-11. "
-            "Если у вас возникла проблема или вопрос по работе с ботом, вы можете обратиться @adress_tp."
-        ]
+        "По вопросам предзаказа можно обратиться по тел. +7(111)111-11-11. "
+        "Если у вас возникла проблема или вопрос по работе с ботом, вы можете обратиться @adress_tp."
+    ]
     await message.answer('\n'.join(text))
     await message.delete()
 
 
-async def message_handler_cart(message: types.Message):
-
-    if not db.exists_user(message.from_user.id):
+async def message_handler_my_cart(message: types.Message):
+    # Сделать метод вывода товаров из корзины если они есть
+    if not db.verification_user(message.from_user.id):
         await message.answer("В корзине нет товаров:")
     else:
         await message.answer("Ваша корзина")
+    await message.delete()
+
+
+async def message_handler_my_order(message: types.Message):
+    # Сделать метод проверки заказов и их вывод если они есть
+    if not db.exists_user(message.from_user.id):
+        await message.answer("У вас нет заказов")
+    else:
+        await message.answer("Ваши заказы")
     await message.delete()
 
 
