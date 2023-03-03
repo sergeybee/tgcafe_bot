@@ -9,10 +9,11 @@ from src.config import load_config
 from src.filters.users import AdminFilter, UserFilter
 from src.handlers.admin import register_admin
 from src.handlers.user import register_user
-from src.handlers.categories import register_categories
-from src.handlers.products import register_products
-from src.handlers.product import register_product
-from src.handlers.cart import register_cart
+from src.handlers.menu_handler import register_menu_handlers
+# from src.handlers.categories import register_categories
+# from src.handlers.products import register_products
+# from src.handlers.product import register_product
+# from src.handlers.cart import register_cart
 
 
 from src.middlewares.environment import EnvironmentMiddleware
@@ -32,10 +33,11 @@ def register_all_filters(dp):
 def register_all_handlers(dp):
     register_admin(dp)
     register_user(dp)
-    register_categories(dp)
-    register_products(dp)
-    register_product(dp)
-    register_cart(dp)
+    register_menu_handlers(dp)
+    # register_categories(dp)
+    # register_products(dp)
+    # register_product(dp)
+    # register_cart(dp)
 
 
 async def main():

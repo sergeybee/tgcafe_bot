@@ -4,8 +4,6 @@ from aiogram import types, Dispatcher
 
 from src.keyboards.reply.menu_user import user_menu
 
-from src.handlers.categories import message_handler_categories
-
 from datetime import datetime
 from src.utils.db.dbase import DataBase
 from src.config import load_config
@@ -50,6 +48,16 @@ async def message_handler_show_help(message: types.Message):
     await message.delete()
 
 
+async def message_handler_cart(message: types.Message):
+
+    if not db.exists_user(message.from_user.id):
+        await message.answer("В корзине нет товаров:")
+    else:
+        await message.answer("Ваша корзина")
+    await message.delete()
+
+
 def register_user(dp: Dispatcher):
     dp.register_message_handler(message_handler_user_start, commands=["start"], state="*", is_user=True)
     dp.register_message_handler(message_handler_show_help, text="Помощь")
+    dp.register_message_handler(message_handler_show_help, text="Корзина")

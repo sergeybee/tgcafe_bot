@@ -1,6 +1,6 @@
 from aiogram import types, Dispatcher
 
-from src.keyboards.inline.ikb_cart import cart_menu
+from src.keyboards.inline.ikb_menus import cart_menu
 
 
 async def message_handler_cart(message: types.Message):
