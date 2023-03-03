@@ -52,10 +52,11 @@ def ikb_products(category_id):
 
 
 # LEVEL 3 - Карточка товара. Inline кнопки увеличения кол-ва товаров в карточке или корзине
-def ikb_product(category_id, item_id):
+async def ikb_product(category_id, item_id):
     CURRENT_LEVEL = 3
+
     markup = InlineKeyboardMarkup()
-    markup.row(InlineKeyboardButton(text=f"Купить", callback_data=buy_item.new(item_id=item_id)))
+    markup.row(InlineKeyboardButton(text=f"Добавить в корзину", callback_data=buy_item.new(item_id=item_id)))
     markup.row(
         InlineKeyboardButton(text="Назад", callback_data=make_callback_data(level=CURRENT_LEVEL - 1, category_id=category_id)))
     return markup

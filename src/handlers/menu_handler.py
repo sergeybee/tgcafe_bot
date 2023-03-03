@@ -30,7 +30,23 @@ async def callback_list_products(callback: types.CallbackQuery, category_id, **k
 async def callback_show_product(callback: types.CallbackQuery, category_id, item_id):
     # Добавить вывод фото
     # Добавить вывод клавиатуры с кол-ом товаров и кнопками плюс (+) и минус (-)
-    await callback.message.edit_text(f"Товар: {db.get_product(item_id)}", reply_markup=ikb_product(category_id, item_id))
+    user_id = callback.from_user.id
+    product = list(db.get_product(item_id))
+
+    idx = product[0]
+    name = product[1]
+    description = product[2]
+    price = product[3]
+    photo_url = product[4]
+
+    text = (f"<b>Товар</b> \t№{idx}: <u>{name}</u>\n"
+            f"<b>Описание:</b> \t{description:}\n"
+            f"<b>Цена:</b> \t{price:}\n")
+
+    await callback.bot.send_photo(chat_id=user_id, photo=photo_url, caption=text)
+
+    markup = await ikb_product(category_id, item_id)
+    await callback.message.edit_reply_markup(reply_markup=markup)
     await callback.answer()
 
 

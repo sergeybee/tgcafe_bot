@@ -39,8 +39,8 @@ class DataBase:
     def get_product(self, product_id):
         """ Получает информацию о продукте из списка продуктов уровня """
         with self.connect:
-            self.cursor.execute('SELECT id, name, price FROM product WHERE id=%s', (product_id,))
-
+            #self.cursor.execute('SELECT id, name, price FROM product WHERE id=%s', (product_id,))
+            self.cursor.execute('SELECT product.id, product.name, product.description, product.price, product_photo.url FROM product_photo JOIN product ON product_photo.product_id = product.id')
             result = self.cursor.fetchone()
         return result
 
