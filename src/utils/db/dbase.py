@@ -11,7 +11,7 @@ class DataBase:
     def verification_user(self, tg_id):
         """ Проверяет наличие пользователя в БД """
         with self.connect:
-            self.cursor.execute('SELECT tg_id FROM customers WHERE tg_id=%s', (tg_id,))
+            self.cursor.execute('SELECT id, tg_id FROM customers WHERE tg_id=%s', (tg_id,))
             result = self.cursor.fetchone()
         return result
 
@@ -36,26 +36,29 @@ class DataBase:
             result = self.cursor.fetchall()
         return result
 
-    def get_product(self, product_id):
+    async def get_product(self, item_id):
         """ Получает информацию о продукте из списка продуктов уровня """
         with self.connect:
-            #self.cursor.execute('SELECT id, name, price FROM product WHERE id=%s', (product_id,))
-            self.cursor.execute('SELECT product.id, product.name, product.description, product.price, product_photo.url FROM product_photo JOIN product ON product_photo.product_id = product.id')
+            self.cursor.execute('SELECT id, name, description, price FROM product WHERE id=%s', (item_id,))
             result = self.cursor.fetchone()
         return result
 
-    def add_to_cart(self, user_id, product_id, count):
+    async def get_photo_item(self, item_id):
+        """ Получает фотографию продукта """
+        with self.connect:
+            self.cursor.execute('SELECT url FROM product_photo WHERE product_id=%s', (item_id,))
+            result = self.cursor.fetchone()
+        return result
+
+    async def add_to_cart(self, customer_id, product_id):
         """ Добавляет товар в корзину """
         with self.connect:
-            self.cursor.execute('INSERT INTO cart(user_id) VALUES(%s), (user_id)')
-
-            result = self.cursor.fetchone()
-        return result
+            self.cursor.execute('INSERT INTO cart(customers_id, product_id) VALUES(%s, %s)', (customer_id, product_id,))
 
     def get_my_cart(self, user_id):
         """ Выводит все товары из корзины """
         with self.connect:
-            self.cursor.execute('SELECT * FROM order WHERE user_id=%s', (user_id,))
+            self.cursor.execute('SELECT * FROM cart WHERE customers_id=%s', (user_id,))
 
             result = self.cursor.fetchall()
         return result

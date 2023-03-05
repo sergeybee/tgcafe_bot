@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
+from aiogram import types
 
 
 from src.utils.db.dbase import DataBase
@@ -10,6 +11,7 @@ db = DataBase(config.db.database, config.db.user, config.db.password, config.db.
 
 menu_cd = CallbackData("show_menu", "level", "category_id", "item_id")
 buy_item = CallbackData("buy", "item_id")
+incr_decr_btn = CallbackData("amount_item", "action")
 
 
 def make_callback_data(level, category_id="0", item_id="0"):
@@ -52,22 +54,23 @@ def ikb_products(category_id):
 
 
 # LEVEL 3 - Карточка товара. Inline кнопки увеличения кол-ва товаров в карточке или корзине
-async def ikb_product(category_id, item_id):
+def ikb_product(category_id, item_id):
     CURRENT_LEVEL = 3
-
     markup = InlineKeyboardMarkup()
+
+    # Кнопки плюс (+), кол-во товара (0-100) и кнопка минус (-)
+    decr_btn = InlineKeyboardButton(text="-", callback_data=incr_decr_btn.new(action="decrease"))
+    count_btn = InlineKeyboardButton(text="1", callback_data=incr_decr_btn.new(action="count"))
+    incr_btn = InlineKeyboardButton(text="+", callback_data=incr_decr_btn.new(action="increase"))
+    markup.row(decr_btn, count_btn, incr_btn)
+
+    # Кнопка "Добавить в корзину"
     markup.row(InlineKeyboardButton(text=f"Добавить в корзину", callback_data=buy_item.new(item_id=item_id)))
+
+    # Кнопка "Назад"
     markup.row(
         InlineKeyboardButton(text="Назад", callback_data=make_callback_data(level=CURRENT_LEVEL - 1, category_id=category_id)))
     return markup
-
-    # decr_btn = InlineKeyboardButton(text="-", callback_data=item.new(action="decrease"))
-    # count_btn = InlineKeyboardButton(text="1", callback_data=item.new(action="count"))
-    # incr_btn = InlineKeyboardButton(text="+", callback_data=item.new(action="increase"))
-    # back_btn = InlineKeyboardButton(text="Назад", callback_data=back_level2.new(action="back_level2"))
-    # markup.add(decr_btn, count_btn, incr_btn, back_btn)
-    #
-    # return markup
 
 
 # def cart_menu():

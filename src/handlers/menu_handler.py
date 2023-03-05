@@ -1,6 +1,8 @@
 from typing import Union
+import asyncio
 
 from aiogram import types, Dispatcher
+from aiogram.types import InputFile
 
 from src.keyboards.inline.ikb_menus import ikb_categories, ikb_products, ikb_product
 from src.keyboards.inline.ikb_menus import menu_cd
@@ -22,7 +24,6 @@ async def msg_call_handler_list_categories(message: Union[types.CallbackQuery, t
 
 
 async def callback_list_products(callback: types.CallbackQuery, category_id, **kwargs):
-
     await callback.message.edit_reply_markup(reply_markup=ikb_products(category_id))
     await callback.answer()
 
@@ -30,24 +31,50 @@ async def callback_list_products(callback: types.CallbackQuery, category_id, **k
 async def callback_show_product(callback: types.CallbackQuery, category_id, item_id):
     # Добавить вывод фото
     # Добавить вывод клавиатуры с кол-ом товаров и кнопками плюс (+) и минус (-)
-    user_id = callback.from_user.id
-    product = list(db.get_product(item_id))
+
+    product = await db.get_product(item_id)
+    product_photo = await db.get_photo_item(item_id)
+    # product_photo = InputFile("/media/user/10B05902B058EFA8/Py_proj/py/myapp/tgcafe_bot/src/img/img0.jpg")
 
     idx = product[0]
     name = product[1]
     description = product[2]
     price = product[3]
-    photo_url = product[4]
 
-    text = (f"<b>Товар</b> \t№{idx}: <u>{name}</u>\n"
-            f"<b>Описание:</b> \t{description:}\n"
-            f"<b>Цена:</b> \t{price:}\n")
+    text = (f"<b>{name}</b>\n"
+            f"\n"
+            f"{description:}\n"
+            f"\n"
+            f"<b>Цена: \t{price:} руб. </b>\n")
 
-    await callback.bot.send_photo(chat_id=user_id, photo=photo_url, caption=text)
-
-    markup = await ikb_product(category_id, item_id)
-    await callback.message.edit_reply_markup(reply_markup=markup)
+    await callback.bot.send_photo(callback.from_user.id, product_photo[0], text)
+    await callback.message.edit_text("text", reply_markup=ikb_product(category_id, item_id))
     await callback.answer()
+
+
+# --------------
+# async def update_num_text_fab(message: types.Message, new_value: int):
+#     with suppress(MessageNotModified):
+#         await message.edit_text(f"Укажите число: {new_value}", reply_markup=get_keyboard_fab())
+#
+# @dp.callback_query_handler(callback_numbers.filter(action=["incr", "decr"]))
+# async def callbacks_num_change_fab(call: types.CallbackQuery, callback_data: dict):
+#     user_value = user_data.get(call.from_user.id, 0)
+#     action = callback_data["action"]
+#     if action == "incr":
+#         user_data[call.from_user.id] = user_value + 1
+#         await update_num_text_fab(call.message, user_value + 1)
+#     elif action == "decr":
+#         user_data[call.from_user.id] = user_value - 1
+#         await update_num_text_fab(call.message, user_value - 1)
+#     await call.answer()
+#
+# @dp.callback_query_handler(callback_numbers.filter(action=["finish"]))
+# async def callbacks_num_finish_fab(call: types.CallbackQuery):
+#     user_value = user_data.get(call.from_user.id, 0)
+#     await call.message.edit_text(f"Итого: {user_value}")
+#     await call.answer()
+# -----------------
 
 
 async def navigate(callback: types.CallbackQuery, callback_data: dict):
