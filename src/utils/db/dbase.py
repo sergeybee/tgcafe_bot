@@ -74,4 +74,4 @@ class DataBase:
     def empty_cart(self, user_id):
         """ Очищает корзину """
         with self.connect:
-            return self.cursor.execute('DELETE FROM cart WHERE user_id=%s', (user_id,))
+            return self.cursor.execute('DELETE FROM cart WHERE customer_id=%s', (user_id,))

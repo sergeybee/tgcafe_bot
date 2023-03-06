@@ -2,6 +2,7 @@ import datetime
 
 from aiogram import types, Dispatcher
 
+# from src.keyboards.inline.ikb_menus import cart_menu
 from src.keyboards.reply.menu_user import user_menu
 
 from datetime import datetime
@@ -52,13 +53,13 @@ async def message_handler_my_cart(message: types.Message):
     """ Хендлер на получение товаров из корзины """
 
     id_user = db.verification_user(message.from_user.id)
-    # res = db.get_my_cart(id_user[0])
-    # print(res)
-    #
+    get_cart = db.get_my_cart(id_user[0])
+
     if not db.get_my_cart(id_user[0]):
         await message.answer("В корзине нет товаров:")
     else:
-        await message.answer("Ваша корзина: Тут ваши товары. Нужно только правильно сформировать запрос :)")
+
+        await message.answer(f"Ваша корзина: {get_cart} :)", reply_markup=cart_menu())
     await message.delete()
 
 
