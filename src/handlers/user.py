@@ -2,39 +2,32 @@ import datetime
 
 from aiogram import types, Dispatcher
 
-# from src.keyboards.inline.ikb_menus import cart_menu
+from src.keyboards.inline.ikb_menus import ikb_cart
 from src.keyboards.reply.menu_user import user_menu
 
 from datetime import datetime
-from src.utils.db.dbase import DataBase
-from src.config import load_config
-
-config = load_config(".env")
-db = DataBase(config.db.database, config.db.user, config.db.password, config.db.host)
+from src.utils.db.dbase import verification_user, add_new_user, get_my_cart
 
 
 async def message_handler_user_start(message: types.Message):
-    #     """welcome message."""
-    #     if await db.verification(message.from_user.id):
-    #         await bot.send_message(message.chat.id, "👋 Hello, I remember you.")
-    #     else:
-    #         if message.from_user.first_name != "None":
-    #             name = message.from_user.first_name
-    #         elif message.from_user.username != "None":
-    #             name = message.from_user.username
-    #         elif message.from_user.last_name != "None":
-    #             name = message.from_user.last_name
-    #         else:
-    #             name = ""
-    #         await db.add_user(message.from_user.id, name, message.from_user.locale.language_name)
-    #         await bot.send_message(message.chat.id, "ℹ️ <b>[About]\n</b> Bot is a template for future projects.")
+    """ Проверяем существование пользователя в БД, если его нет то создаем его"""
 
-    if not db.verification_user(message.from_user.id):
-        await message.answer("Здравствуйте, вы у нас в первый раз", reply_markup=user_menu())
-        db.add_new_user(message.from_user.id, message.from_user.first_name, message.from_user.username,
-                        datetime.now())
+    global first_name, user_name
+    user_id = await verification_user(message.from_user.id)
+
+    if not user_id:
+        await message.answer("Здравствуйте, вы у нас в первый раз!?", reply_markup=user_menu())
+
+        if message.from_user.first_name != "None":
+            first_name = message.from_user.first_name
+        elif message.from_user.username != "None":
+            user_name = message.from_user.username
+
+        await add_new_user(message.from_user.id, first_name, user_name, datetime.now())
+
     else:
-        await message.answer("Рады видеть вас снова!!!", reply_markup=user_menu())
+        await message.bot.send_message(message.chat.id, "Рады видеть вас снова!!!", reply_markup=user_menu())
+
     await message.delete()
 
 
@@ -51,22 +44,22 @@ async def message_handler_show_help(message: types.Message):
 
 async def message_handler_my_cart(message: types.Message):
     """ Хендлер на получение товаров из корзины """
+    customer_id = await verification_user(message.from_user.id)
+    item_list_my_cart = await get_my_cart(customer_id[0])
+    markup = await ikb_cart(item_list_my_cart, customer_id)
+    if customer_id is not None and item_list_my_cart is not None:
 
-    id_user = db.verification_user(message.from_user.id)
-    get_cart = db.get_my_cart(id_user[0])
+        await message.answer(f"Ваша корзина: {item_list_my_cart} :)", reply_markup=markup)
 
-    if not db.get_my_cart(id_user[0]):
-        await message.answer("В корзине нет товаров:")
     else:
-
-        await message.answer(f"Ваша корзина: {get_cart} :)", reply_markup=cart_menu())
+        await message.answer("В корзине пока нет товаров:")
     await message.delete()
 
 
 async def message_handler_my_order(message: types.Message):
     """ Хендлер на отображение всех сделанных заказов """
 
-    if not db.verification_user(message.from_user.id):
+    if not verification_user(message.from_user.id):
         await message.answer("У вас нет заказов")
     else:
         await message.answer("Ваши заказы, здесь будут выводиться заказы. Нужно только сформировать запрос к БД :)")
